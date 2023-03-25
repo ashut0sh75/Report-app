@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">Report Application</string>
+    <string name="rose">Rose</string>
+    <string name="todo">TODO</string>
+    <string name="report">Report</string>
+    <string name="enter_feedback">Enter Feedback</string>
+    <string name="to">TODO</string>
+    <string name="repor">Report</string>
+    <string name="select">Select Reason</string>
+    <string name="repo">Report</string>
+    <string name="select_reason">Select Reason</string>
+    <string name="rep">Report</string>
+    <string name="select_an_item">Select an Reason</string>
+    <string name="hii">Hii</string>
+
+</resources>

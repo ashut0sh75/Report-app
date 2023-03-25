@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingHorizontal="16dp"
+    tools:context=".StorageActivity"
+    android:theme="@style/Theme.AppCompat">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/repo"
+        android:textAlignment="center"
+        android:textColor="#607D8B"
+        android:textSize="26sp"
+        android:textStyle="bold"
+        tools:ignore="TextSizeCheck" />
+
+    <ImageView
+        android:id="@+id/firebaseImage"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_marginVertical="30dp"
+        android:contentDescription="@string/hii"
+        android:scaleType="centerCrop"
+        android:src="@drawable/flower2" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/droplist"
+        style="@style/TextAppearance.AppCompat.Widget.DropDownItem"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/select_an_item"
+
+        >
+
+        <AutoCompleteTextView
+            android:id="@+id/auto_complete_text_view"
+            style="@style/TextAppearance.AppCompat.Widget.DropDownItem"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:inputType="textAutoComplete|textAutoCorrect"
+            android:padding="16dp"
+            tools:ignore="SpeakableTextPresentCheck" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <Button
+        android:id="@+id/ReportBtn"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:layout_marginBottom="32dp"
+        android:text="@string/rep"
+         />
+
+
+</LinearLayout>
