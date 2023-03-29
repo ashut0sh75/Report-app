@@ -14,75 +14,93 @@ import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageMetadata
 import com.google.firebase.storage.StorageReference
 import java.io.ByteArrayOutputStream
 
 class StorageActivity : AppCompatActivity() {
 
-    private lateinit var  binding: ActivityStorageBinding
-    private lateinit var database : DatabaseReference
-    private lateinit var  storage : StorageReference
-    var item = arrayOf("Reason1", "Reason2", "Reason3", "Reason4")
+    private lateinit var binding: ActivityStorageBinding
+    private lateinit var database: DatabaseReference
+    private lateinit var storage: StorageReference
+    private val item = arrayOf("Reason1", "Reason2", "Reason3", "Reason4")
+    private var selectedImageResourceId: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityStorageBinding.inflate(layoutInflater)
+        database = FirebaseDatabase.getInstance().getReference("Users")
         setContentView(binding.root)
 
-        val adapter = ArrayAdapter(this@StorageActivity, android.R.layout.simple_dropdown_item_1line, item)
+        selectedImageResourceId = intent.getIntExtra("image_resource_id", 0)
+        binding.selectedImageView.setImageResource(selectedImageResourceId)
+
+        // Set up the dropdown menu for the reasons
+        val adapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, item)
         val textInputLayout = findViewById<TextInputLayout>(R.id.droplist)
-        val autoCompleteTextView = textInputLayout.findViewById<AutoCompleteTextView>(R.id.auto_complete_text_view)
+        val autoCompleteTextView =
+            textInputLayout.findViewById<AutoCompleteTextView>(R.id.auto_complete_text_view)
 
         autoCompleteTextView.setAdapter(adapter)
-        autoCompleteTextView.threshold = 0
 
         autoCompleteTextView.setOnTouchListener { _, _ ->
             autoCompleteTextView.showDropDown()
             false
         }
 
-        binding.ReportBtn.setOnClickListener{
-            val simple =autoCompleteTextView.text.toString()
-            Log.d(TAG, "Selected item: $simple")
-            uploadText(simple)
+        binding.ReportBtn.setOnClickListener {
+            val reason = autoCompleteTextView.text.toString()
+            Log.d(TAG, "Selected reason: $reason")
+            uploadFeedback(reason)
         }
     }
 
-    private fun uploadText(uploadtext: String) {
-        if (uploadtext.isEmpty() || uploadtext !in item ) {
-            Toast.makeText(this,"Please select a reason",Toast.LENGTH_SHORT).show()
+    private fun uploadFeedback(reason: String) {
+
+        if (reason !in item) {
+            Toast.makeText(this, "Please select a valid reason", Toast.LENGTH_SHORT).show()
             return
         }
 
-        database = FirebaseDatabase.getInstance().getReference("Users")
-        database.child(uploadtext).setValue(uploadtext).addOnSuccessListener {
-            binding.autoCompleteTextView.text.clear()
-            Toast.makeText(this,"Successfully Saved Text",Toast.LENGTH_SHORT).show()
-            var intent = Intent(this@StorageActivity, feedback::class.java)
-            uploadImage(uploadtext)
-            startActivity(intent)
+        // Generate a unique key for the feedback item
+        val feedbackKey = database.child(reason).push().key
 
+        // Create a new child under the selected reason with the unique key and upload the text
+        val feedbackRef = database.child(reason).child(feedbackKey!!)
 
-        }.addOnFailureListener{
-            Toast.makeText(this,"Failed to upload text",Toast.LENGTH_SHORT).show()
-        }
+        feedbackRef.child("feedback_/$reason").setValue(reason)
+            .addOnSuccessListener {
+                binding.autoCompleteTextView.text.clear()
+                Toast.makeText(this, "Successfully saved text", Toast.LENGTH_SHORT).show()
+                val intent = Intent(this, feedback::class.java)
+                uploadImage(reason, feedbackKey)
+                startActivity(intent)
+            }.addOnFailureListener {
+                Toast.makeText(this, "Failed to upload text", Toast.LENGTH_SHORT).show()
+            }
     }
 
-    private fun uploadImage(imageName: String){
+
+    private fun uploadImage(reason: String, feedbackKey: String) {
         storage = FirebaseStorage.getInstance().getReference("Users")
-        val bitmap = BitmapFactory.decodeResource(resources, R.drawable.flower2)
-        val imageRef = storage.child("images/${imageName}")
+        val imageRef = storage.child("images/$reason")
 
         val baos = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 10, baos)
+
+        BitmapFactory.decodeResource(resources, selectedImageResourceId)
+            ?.compress(Bitmap.CompressFormat.JPEG, 10, baos)
         val data = baos.toByteArray()
 
-        imageRef.putBytes(data)
+        val metadata = StorageMetadata.Builder()
+            .setContentType("image/jpeg")
+            .build()
+
+        imageRef.putBytes(data, metadata)
             .addOnSuccessListener {
-                Toast.makeText(this,"Successfully Saved image",Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Successfully saved image", Toast.LENGTH_SHORT).show()
             }
             .addOnFailureListener {
-                Toast.makeText(this,"Failed to upload image",Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Failed to upload image", Toast.LENGTH_SHORT).show()
             }
     }
 

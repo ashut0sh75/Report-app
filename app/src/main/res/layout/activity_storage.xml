@@ -20,13 +20,14 @@
         tools:ignore="TextSizeCheck" />
 
     <ImageView
-        android:id="@+id/firebaseImage"
+        android:id="@+id/selectedImageView"
         android:layout_width="match_parent"
         android:layout_height="300dp"
         android:layout_marginVertical="30dp"
         android:contentDescription="@string/hii"
         android:scaleType="centerCrop"
-        android:src="@drawable/flower2" />
+        android:src="@drawable/ic_launcher_background"
+        />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/droplist"

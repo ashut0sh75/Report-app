@@ -10,7 +10,7 @@
         android:theme="@style/Theme.AppCompat">
         <activity
             android:name=".feedback"
-            android:exported="false" />
+            android:exported="true" />
         <activity
             android:name=".StorageActivity"
             android:exported="true"></activity>
